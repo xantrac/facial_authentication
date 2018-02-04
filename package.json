@@ -1,6 +1,6 @@
 {
-  "engines": {"node": "8.6.0"},
-  "name": "present-and-past",
+  "engines": {"node": "9.4.0"},
+  "name": "MERN-boilerplate",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
