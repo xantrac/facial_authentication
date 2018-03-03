@@ -11,18 +11,18 @@ app.get('/', (req,res) => {
 
 
 
-mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI); //mongodb://localhost/idea-board
+// mongoose.Promise = global.Promise;
+// mongoose.connect(process.env.MONGODB_URI); //mongodb://localhost/idea-board
 
-const connection = mongoose.connection;
-connection.on('connected', () => {
-  console.log('Mongoose Connected Successfully');    
-}); 
+// const connection = mongoose.connection;
+// connection.on('connected', () => {
+//   console.log('Mongoose Connected Successfully');    
+// }); 
 
-// If the connection throws an error
-connection.on('error', (err) => {
-  console.log('Mongoose default connection error: ' + err);
-}); 
+// // If the connection throws an error
+// connection.on('error', (err) => {
+//   console.log('Mongoose default connection error: ' + err);
+// }); 
 
 app.use(bodyParser.json());
 app.get('/', (req,res) => {

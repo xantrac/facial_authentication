@@ -1,6 +1,8 @@
 {
-  "engines": {"node": "9.4.0"},
-  "name": "MERN-boilerplate",
+  "engines": {
+    "node": "9.4.0"
+  },
+  "name": "earthshare",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
