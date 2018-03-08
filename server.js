@@ -9,25 +9,23 @@ app.get('/', (req,res) => {
   res.sendFile(__dirname + '/client/build/index.html')
 })
 
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI); 
 
+const connection = mongoose.connection;
+connection.on('connected', () => {
+  console.log('Mongoose Connected Successfully');    
+}); 
 
-// mongoose.Promise = global.Promise;
-// mongoose.connect(process.env.MONGODB_URI); //mongodb://localhost/idea-board
-
-// const connection = mongoose.connection;
-// connection.on('connected', () => {
-//   console.log('Mongoose Connected Successfully');    
-// }); 
-
-// // If the connection throws an error
-// connection.on('error', (err) => {
-//   console.log('Mongoose default connection error: ' + err);
-// }); 
+// If the connection throws an error
+connection.on('error', (err) => {
+  console.log('Mongoose default connection error: ' + err);
+}); 
 
 app.use(bodyParser.json());
-app.get('/', (req,res) => {
-  res.send('Hello world!')
-})
+
+const LoginController = require('./routes/LoginController')
+app.use('/api/login', LoginController)
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
