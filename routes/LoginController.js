@@ -36,10 +36,11 @@ router.post('/', (req,res) => {
 })
 
 router.post('/signIn', (req,res) => {
-    console.log(req.body)
+
     const email = req.body.email
     const password = req.body.password
     const registeredPic = req.body.registeredPic
+    console.log(req.body)
 
     User.findOne({email})
     .then(user => {

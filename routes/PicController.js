@@ -8,37 +8,19 @@ const blobUtil = require('blob-util')
 const  subscriptionKey = process.env.subscriptionKey;
 const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
 
-const makeblob = function (dataURL) {
-    var BASE64_MARKER = ';base64,';
-    if (dataURL.indexOf(BASE64_MARKER) == -1) {
-        var parts = dataURL.split(',');
-        var contentType = parts[0].split(':')[1];
-        var raw = decodeURIComponent(parts[1]);
-        return new Blob([raw], { type: contentType });
-    }
-    var parts = dataURL.split(BASE64_MARKER);
-    var contentType = parts[0].split(':')[1];
-    var raw = window.atob(parts[1]);
-    var rawLength = raw.length;
 
-    var uInt8Array = new Uint8Array(rawLength);
-
-    for (var i = 0; i < rawLength; ++i) {
-        uInt8Array[i] = raw.charCodeAt(i);
-    }
-
-    return new Blob([uInt8Array], { type: contentType });
-}
 
 
 router.get('/:userId', (req,res) => {
+
     User.findById(req.params.userId)
     .then(user => {
         const data = user.registeredPic
+        const buffer = new Buffer(data, 'base64').toString('binary').split('')
     axios({
         method: "post",
         url: uriBase + "?",
-        data: makeblob(data),
+        data: buffer,
         headers: { 
                     "Content-Type" : 'application/octet-stream',
                     "processData" : false,
@@ -52,6 +34,7 @@ router.get('/:userId', (req,res) => {
         })
     })
     .then(res => console.log(res.data))
+    .catch(err => console.log(err))
 
 })
     
