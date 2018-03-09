@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router(({ mergeParams: true }))
 const axios = require('axios')
+const User = require('../db/UserModel')
+const blobUtil = require('blob-util')
 
 const  subscriptionKey = process.env.subscriptionKey;
 const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
@@ -31,35 +33,28 @@ router.post('/', (req,res) => {
         })
         .then(data => res.json(data))
       .catch(err => console.log(err))
-
-    // Perform the REST API call.
-    // $.ajax({
-    //     url: uriBase + "?" + $.param(params),
-    //     // Request headers.
-    //     beforeSend: function(xhrObj){
-    //         xhrObj.setRequestHeader("Content-Type","application/json");
-    //         xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-    //     },
-    //     type: "POST",
-    //     // Request body.
-    //     data: '{"url": ' + '"' + sourceImageUrl + '"}',
-    // })
-
-    // .done(function(data) {
-    //     // Show formatted JSON on webpage.
-    //     $("#responseTextArea").val(JSON.stringify(data, null, 2));
-    // })
-
-    // .fail(function(jqXHR, textStatus, errorThrown) {
-    //     // Display error message.
-    //     var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-    //     errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-    //         jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-    //     alert(errorString);
-    // });
 })
 
+router.post('/signIn', (req,res) => {
+    console.log(req.body)
+    const email = req.body.email
+    const password = req.body.password
+    const registeredPic = req.body.registeredPic
 
+    User.findOne({email})
+    .then(user => {
+        if (user) {
+            console.log("this user exist:",user)
+          res.json({userExist : true})
+        }
+        else {
+            console.log("this do not exist:",user)
+           return User.create(req.body)
+        }
+    })
+    .then(user => res.json(user))
+    .catch(err => console.log(err))
+})
 
     
 

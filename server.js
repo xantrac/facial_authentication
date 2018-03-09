@@ -27,6 +27,9 @@ app.use(bodyParser.json());
 const LoginController = require('./routes/LoginController')
 app.use('/api/login', LoginController)
 
+const PicController = require('./routes/PicController')
+app.use('/api/pics/', PicController)
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log("Magic happening on port " + PORT);
