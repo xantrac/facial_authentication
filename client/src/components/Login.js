@@ -72,7 +72,10 @@ class Login extends Component {
                 },
             })
         .then(res => {
+            if (res.data.length > 0) {
             return res.data[0].faceId
+            }
+            else {this.props.alert.error("No face detected, try again")}
         })
         .catch(err => console.log(err))
     }
