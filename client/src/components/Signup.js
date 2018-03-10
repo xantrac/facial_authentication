@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components';
 import { Form, Input, Button } from 'reactstrap';
+import { withAlert } from 'react-alert'
+import _ from 'lodash'
 
 
 const makeblob = function (dataURL) {
@@ -29,8 +32,16 @@ const makeblob = function (dataURL) {
 
 class SignUp extends Component {
 
-    state ={
-     
+    state = {
+        name : "",
+        email : "",
+        password : ""
+    }
+
+    delayState = function () {
+        setTimeout(() => {
+            this.setState({redirect : true})
+        }, 2000);
     }
 
     handleChange = (event) => {
@@ -83,7 +94,17 @@ class SignUp extends Component {
             }
         return axios.post('api/login/signIn', newUser)
         })
-        .then(res => console.log(res.data))
+        .then(res => {
+            console.log(res.data)
+            if (res.data.userExist) {
+                this.props.alert.error(`User ${this.state.email} already exist!`)
+                this.setState({name : "", email : "", password : ""})
+            }
+            else {
+                this.props.alert.success(`User ${this.state.email} created!`)
+                this.delayState() 
+            }
+        })
         .catch(err => console.log(err))     
     };
 
@@ -91,7 +112,13 @@ class SignUp extends Component {
 
 
     render() {
+
+        if (this.state.redirect) {
+            return (<Redirect to={`/`}/>)
+        }
+
         return (
+
             <Wrapper>
                 <Webcam
                     audio={false}
@@ -101,18 +128,36 @@ class SignUp extends Component {
                     width={350}
                 />
 
-                <Form onSubmit={this.capture}>
-                    <Input onChange={this.handleChange} name="name" placeholder="name"/>
-                    <Input onChange={this.handleChange} name="email" placeholder="email"/>
-                    <Input onChange={this.handleChange} name="password" placeholder="password"/>
-                    <Button color="primary">Sign In</Button>
+                <Form style={styles.form} onSubmit={this.capture}>
+                    <Input 
+                        onChange={this.handleChange}
+                        value={this.state.name}
+                        name="name"
+                        placeholder="name"
+                        required="true"
+                    />
+                    <Input 
+                        onChange={this.handleChange}
+                        value={this.state.email}
+                        name="email"
+                        placeholder="email"
+                        required="true"
+                    />
+                    <Input 
+                        onChange={this.handleChange}
+                        value={this.state.password}
+                        name="password"
+                        placeholder="password"
+                        required="true"
+                    />
+                    <Button style={styles.signInButton} color="danger">Sign In</Button>
                 </Form>
             </Wrapper>
         );
     }
 }
 
-export default SignUp;
+export default withAlert(SignUp);
 
 const Wrapper = styled.div`
     width : 100vw;
@@ -122,3 +167,22 @@ const Wrapper = styled.div`
     align-items : center;
     flex-direction : column;
 `
+
+const ButtonWrapper = styled.div`
+    width : 100%;
+    display : flex;
+    justify-content : center;
+    margin : 7% 0;
+`
+
+const styles = {
+
+    signInButton: {
+      margin: "5% 0"
+    },
+
+    form: {
+        display : "flex",
+        flexDirection : 'column',
+    }
+}
