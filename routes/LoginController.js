@@ -7,9 +7,16 @@ const blobUtil = require('blob-util')
 const  subscriptionKey = process.env.subscriptionKey;
 const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
 
-router.post('/', (req,res) => {
-    console.log(req.body.pic)
 
+router.get('/:userId',(req,res) => {
+    const email = req.params.userId
+    User.findOne({email})
+    .then(user => res.json(user))
+    .catch(err => console.log(err))
+})
+
+
+router.post('/', (req,res) => {
     var sourceImageUrl = req.body.pic;
 
     axios({

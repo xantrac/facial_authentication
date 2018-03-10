@@ -3,6 +3,7 @@ import Webcam from 'react-webcam';
 import axios from 'axios'
 import styled from 'styled-components';
 import { Form, Input, Button } from 'reactstrap';
+import { withAlert } from 'react-alert'
 
 
 const makeblob = function (dataURL) {
@@ -27,7 +28,9 @@ const makeblob = function (dataURL) {
     return new Blob([uInt8Array], { type: contentType });
 }
 
-class SignUp extends Component {
+const  subscriptionKey = process.env.REACT_APP_subscriptionKey;
+
+class Login extends Component {
 
     state ={
      
@@ -43,7 +46,6 @@ class SignUp extends Component {
     }
 
     detectFace = (image) => {
-        const  subscriptionKey = process.env.REACT_APP_subscriptionKey;
         const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
         const data = makeblob(image)
         console.log(data)
@@ -69,26 +71,42 @@ class SignUp extends Component {
         .catch(err => console.log(err))
     }
 
-    capture = (event) => {
+    validateUser = async(event) => {
+      try {
         event.preventDefault()
-        const imageSrc = this.webcam.getScreenshot();
-        this.detectFace(imageSrc)
-        .then(id => {
-            console.log(id)
-            const newUser = {
-                name : this.state.name,
-                email : this.state.email,
-                password : this.state.password,
-                registeredPic : id
-            }
-        return axios.post('api/login/signIn', newUser)
-        })
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err))     
+        const user = await axios.get(`api/login/${this.state.email}`)
+        if (user.data.email) {
+          const savedPic = user.data.registeredPic
+          console.log(savedPic)
+          if (user.data.password === this.state.password) {
+            const imageSrc = this.webcam.getScreenshot()
+            const picToVerify = await this.detectFace(imageSrc)
+            const match = await axios({
+              method: "post",
+              data : {
+                faceId1 : savedPic,
+                faceId2 : picToVerify
+              },
+              url: "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/verify",
+              headers: { 
+                  "Content-Type" : 'application/json',
+                  "Ocp-Apim-Subscription-Key" : subscriptionKey
+                  }
+              })
+            const isIdentical = match.data.isIdentical
+            if (isIdentical) { this.setState({redirect : true})}
+            else {this.props.alert.error("User face is not matching")}
+          }
+          else {this.props.alert.error("Wrong password")}
+        }
+        else {this.props.alert.error("Wrong email")}
+      
+    }
+    catch(error) {
+      console.error(error);
+    }
+        
     };
-
-
-
 
     render() {
         return (
@@ -101,8 +119,7 @@ class SignUp extends Component {
                     width={350}
                 />
 
-                <Form onSubmit={this.capture}>
-                    <Input onChange={this.handleChange} name="name" placeholder="name"/>
+                <Form onSubmit={this.validateUser}>
                     <Input onChange={this.handleChange} name="email" placeholder="email"/>
                     <Input onChange={this.handleChange} name="password" placeholder="password"/>
                     <Button color="primary">Sign In</Button>
@@ -112,7 +129,7 @@ class SignUp extends Component {
     }
 }
 
-export default SignUp;
+export default withAlert(Login);
 
 const Wrapper = styled.div`
     width : 100vw;
