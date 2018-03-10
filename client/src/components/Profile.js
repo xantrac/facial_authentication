@@ -28,9 +28,9 @@ class Profile extends Component {
 
         return (
             <Wrapper>
-                <Title>This is {this.state.user.name} page</Title>
+                <Title>This is {this.state.user.name}'s page</Title>
                 <SubTitle>you logged in using your face!</SubTitle>
-                <SubTitle>Isn't incredible?!</SubTitle>
+                <SubTitle>Isn't it incredible?!</SubTitle>
                 <ButtonWrapper>
                     <Link to={"/"}><Button color="primary" size="lg">Log Out</Button></Link>
                 </ButtonWrapper> 

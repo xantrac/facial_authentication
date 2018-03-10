@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
 import axios from 'axios'
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { Form, Input, Button } from 'reactstrap';
 import { withAlert } from 'react-alert'
@@ -33,7 +34,14 @@ const  subscriptionKey = process.env.REACT_APP_subscriptionKey;
 class Login extends Component {
 
     state ={
-     
+     email : "",
+     password : ""
+    }
+
+    delayState = function () {
+      setTimeout(() => {
+          this.setState({redirect : true})
+      }, 2000);
     }
 
     handleChange = (event) => {
@@ -75,9 +83,8 @@ class Login extends Component {
       try {
         event.preventDefault()
         const user = await axios.get(`api/login/${this.state.email}`)
-        if (user.data.email) {
+        if (user.data) {
           const savedPic = user.data.registeredPic
-          console.log(savedPic)
           if (user.data.password === this.state.password) {
             const imageSrc = this.webcam.getScreenshot()
             const picToVerify = await this.detectFace(imageSrc)
@@ -94,12 +101,24 @@ class Login extends Component {
                   }
               })
             const isIdentical = match.data.isIdentical
-            if (isIdentical) { this.setState({redirect : true})}
-            else {this.props.alert.error("User face is not matching")}
+            if (isIdentical) {
+              this.props.alert.success(`User face is matching!`)
+              this.delayState() 
+              }
+            else {
+              this.props.alert.error("User face is not matching")
+              this.setState({name : "", email : "", password : ""})
+            }
           }
-          else {this.props.alert.error("Wrong password")}
+          else {
+            this.props.alert.error("Wrong password")
+            this.setState({name : "", email : "", password : ""})
+          }
         }
-        else {this.props.alert.error("Wrong email")}
+        else {
+          this.props.alert.error("User doesn't exist")
+          this.setState({name : "", email : "", password : ""})
+        }
       
     }
     catch(error) {
@@ -109,6 +128,10 @@ class Login extends Component {
     };
 
     render() {
+
+      if (this.state.redirect) {
+        return (<Redirect to={`/personalPage/${this.state.email}`}/>)
+      }
         return (
             <Wrapper>
                 <Webcam
@@ -119,10 +142,22 @@ class Login extends Component {
                     width={350}
                 />
 
-                <Form onSubmit={this.validateUser}>
-                    <Input onChange={this.handleChange} name="email" placeholder="email"/>
-                    <Input onChange={this.handleChange} name="password" placeholder="password"/>
-                    <Button color="primary">Sign In</Button>
+                <Form style={styles.form} onSubmit={this.validateUser}>
+                    <Input 
+                        onChange={this.handleChange}
+                        value={this.state.email}
+                        name="email"
+                        placeholder="email"
+                        required="true"
+                    />
+                    <Input 
+                        onChange={this.handleChange}
+                        value={this.state.password}
+                        name="password"
+                        placeholder="password"
+                        required="true"
+                    />
+                    <Button style={styles.signInButton} color="primary">Log In</Button>
                 </Form>
             </Wrapper>
         );
@@ -139,3 +174,15 @@ const Wrapper = styled.div`
     align-items : center;
     flex-direction : column;
 `
+
+const styles = {
+
+  signInButton: {
+    margin: "5% 0"
+  },
+
+  form: {
+      display : "flex",
+      flexDirection : 'column',
+  }
+}

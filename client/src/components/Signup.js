@@ -150,7 +150,7 @@ class SignUp extends Component {
                         placeholder="password"
                         required="true"
                     />
-                    <Button style={styles.signInButton} color="danger">Sign In</Button>
+                    <Button style={styles.signInButton} color="danger">Sign Up</Button>
                 </Form>
             </Wrapper>
         );

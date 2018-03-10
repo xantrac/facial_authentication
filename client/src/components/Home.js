@@ -19,10 +19,10 @@ class Home extends Component {
         <Title>Face authentication</Title>
         <ButtonSection>
           <ButtonWrapper>
-            <Link to={"/login"}><Button color="primary" size="lg">Log In</Button></Link>
+            <Link to={"/login"}><Button style={styles.button} color="primary" size="lg">Log In</Button></Link>
           </ButtonWrapper>
           <ButtonWrapper>
-            <Link to={"/signin"}><Button color="danger" size="lg">Sign In</Button></Link>
+            <Link to={"/signin"}><Button style={styles.button} color="danger" size="lg">Sign Up</Button></Link>
           </ButtonWrapper> 
         </ButtonSection>
       </Wrapper>
@@ -59,3 +59,10 @@ const Title = styled.div`
     margin : 50% 0 5% 0;
   }
 `
+
+const styles = {
+
+  button: {
+    minWidth : "100px"
+  },
+}
