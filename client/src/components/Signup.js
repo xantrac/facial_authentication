@@ -57,7 +57,6 @@ class SignUp extends Component {
         const  subscriptionKey = process.env.REACT_APP_subscriptionKey;
         const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
         const data = makeblob(image)
-        console.log(data)
         return axios({
             method: "post",
             url: uriBase + "?",
@@ -74,7 +73,6 @@ class SignUp extends Component {
                 },
             })
         .then(res => {
-            console.log(res.data)
             return res.data[0].faceId
         })
         .catch(err => console.log(err))
@@ -85,7 +83,6 @@ class SignUp extends Component {
         const imageSrc = this.webcam.getScreenshot();
         this.detectFace(imageSrc)
         .then(id => {
-            console.log(id)
             const newUser = {
                 name : this.state.name,
                 email : this.state.email,
@@ -95,7 +92,6 @@ class SignUp extends Component {
         return axios.post('api/login/signIn', newUser)
         })
         .then(res => {
-            console.log(res.data)
             if (res.data.userExist) {
                 this.props.alert.error(`User ${this.state.email} already exist!`)
                 this.setState({name : "", email : "", password : ""})

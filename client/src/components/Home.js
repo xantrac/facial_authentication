@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import Webcam from 'react-webcam';
-import logo from '../logo.svg';
 import '../App.css';
 import { Button } from 'reactstrap';
-import axios from 'axios'
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 

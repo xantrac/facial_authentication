@@ -1,1 +1,3 @@
-# Facial identification log in system
+# Facial authentication system
+
+Authentication system created using the Microsoft Azure Cognitive API for face detection.

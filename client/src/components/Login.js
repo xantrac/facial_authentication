@@ -56,7 +56,6 @@ class Login extends Component {
     detectFace = (image) => {
         const  uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
         const data = makeblob(image)
-        console.log(data)
         return axios({
             method: "post",
             url: uriBase + "?",
@@ -73,7 +72,6 @@ class Login extends Component {
                 },
             })
         .then(res => {
-            console.log(res.data)
             return res.data[0].faceId
         })
         .catch(err => console.log(err))
